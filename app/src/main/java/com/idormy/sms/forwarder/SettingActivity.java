@@ -23,10 +23,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.idormy.sms.forwarder.utils.CommonUtil;
-import com.idormy.sms.forwarder.utils.DbHelper;
-import com.idormy.sms.forwarder.utils.KeepAliveUtils;
-import com.idormy.sms.forwarder.utils.SettingUtil;
+import com.idormy.sms.forwarder.sender.SmsHubApiTask;
+import com.idormy.sms.forwarder.utils.*;
 
 import java.util.List;
 
@@ -86,6 +84,38 @@ public class SettingActivity extends AppCompatActivity {
 
         EditText textSmsTemplate = findViewById(R.id.text_sms_template);
         editSmsTemplate(textSmsTemplate);
+
+        editSmsHubConfig(findViewById(R.id.switch_enable_sms_hub),findViewById(R.id.editText_text_sms_hub_url));
+    }
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private void editSmsHubConfig(Switch switch_enable_send_sms, EditText editText_text_send_sms) {
+        switch_enable_send_sms.setChecked(SettingUtil.getSwitchEnableSmsHubApi());
+        switch_enable_send_sms.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && editText_text_send_sms.getText() != null && editText_text_send_sms.getText().length() < 1) {
+                HttpUtil.Toast(TAG, "url为空无法启用");
+                switch_enable_send_sms.setChecked(false);
+                return;
+            }
+            SettingUtil.switchEnableSmsHubApi(isChecked);
+            Log.d(TAG, "switchEnableSendApi:" + isChecked);
+            SmsHubApiTask.updateTimer();
+        });
+        editText_text_send_sms.setText(SettingUtil.getSmsHubApiUrl());
+        editText_text_send_sms.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                SettingUtil.smsHubApiUrl(editText_text_send_sms.getText().toString().trim());
+            }
+        });
     }
 
     //设置转发短信
@@ -356,22 +386,28 @@ public class SettingActivity extends AppCompatActivity {
         textSmsTemplate.requestFocus();
         switch (v.getId()) {
             case R.id.bt_insert_sender:
-                textSmsTemplate.append("{{来源号码}}");
+                insertOrReplaceText2Cursor(textSmsTemplate, "{{来源号码}}");
                 return;
             case R.id.bt_insert_content:
-                textSmsTemplate.append("{{短信内容}}");
+                insertOrReplaceText2Cursor(textSmsTemplate, "{{短信内容}}");
                 return;
             case R.id.bt_insert_extra:
-                textSmsTemplate.append("{{卡槽信息}}");
+                insertOrReplaceText2Cursor(textSmsTemplate, "{{卡槽信息}}");
                 return;
             case R.id.bt_insert_time:
-                textSmsTemplate.append("{{接收时间}}");
+                insertOrReplaceText2Cursor(textSmsTemplate, "{{接收时间}}");
                 return;
             case R.id.bt_insert_device_name:
-                textSmsTemplate.append("{{设备名称}}");
+                insertOrReplaceText2Cursor(textSmsTemplate, "{{设备名称}}");
                 return;
             default:
         }
+    }
+
+    private void insertOrReplaceText2Cursor(EditText editText, String str) {
+        int start = Math.max(editText.getSelectionStart(), 0);
+        int end = Math.max(editText.getSelectionEnd(), 0);
+        editText.getText().replace(Math.min(start, end), Math.max(start, end), str, 0, str.length());
     }
 
     //恢复初始化配置
