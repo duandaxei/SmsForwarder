@@ -10,6 +10,7 @@ import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.idormy.sms.forwarder.MyApplication;
 import com.idormy.sms.forwarder.model.vo.SmsHubVo;
 import com.idormy.sms.forwarder.model.vo.SmsVo;
 import com.idormy.sms.forwarder.sender.SendUtil;
@@ -32,6 +33,10 @@ public class BatteryService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "onCreate--------------");
+
+        //是否同意隐私协议
+        if (!MyApplication.allowPrivacyPolicy) return;
+
         IntentFilter batteryfilter = new IntentFilter();
         batteryfilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(batteryReceiver, batteryfilter);
@@ -52,6 +57,10 @@ public class BatteryService extends Service {
     public void onDestroy() {
         Log.i(TAG, "onDestroy--------------");
         super.onDestroy();
+
+        //是否同意隐私协议
+        if (!MyApplication.allowPrivacyPolicy) return;
+
         this.unregisterReceiver(batteryReceiver);
     }
 
@@ -109,11 +118,19 @@ public class BatteryService extends Service {
 
                 int levelMin = SettingUtil.getBatteryLevelAlarmMin();
                 int levelMax = SettingUtil.getBatteryLevelAlarmMax();
-                if (levelMin > 0 && levelPre > levelCur && levelCur <= levelMin) { //电量下降到下限
+                if (SettingUtil.getBatteryLevelAlarmOnce() && levelMin > 0 && levelPre > levelCur && levelCur <= levelMin) { //电量下降到下限
+                    msg = "【电量预警】已低于电量预警下限，请及时充电！" + msg;
+                    sendMessage(context, msg);
+                    return;
+                } else if (SettingUtil.getBatteryLevelAlarmOnce() && levelMax > 0 && levelPre < levelCur && levelCur >= levelMax) { //电量上升到上限
+                    msg = "【电量预警】已高于电量预警上限，请拔掉充电器！" + msg;
+                    sendMessage(context, msg);
+                    return;
+                } else if (!SettingUtil.getBatteryLevelAlarmOnce() && levelMin > 0 && levelPre > levelCur && levelCur == levelMin) { //电量下降到下限
                     msg = "【电量预警】已到达电量预警下限，请及时充电！" + msg;
                     sendMessage(context, msg);
                     return;
-                } else if (levelMax > 0 && levelPre < levelCur && levelCur >= levelMax) { //电量上升到上限
+                } else if (!SettingUtil.getBatteryLevelAlarmOnce() && levelMax > 0 && levelPre < levelCur && levelCur == levelMax) { //电量上升到上限
                     msg = "【电量预警】已到达电量预警上限，请拔掉充电器！" + msg;
                     sendMessage(context, msg);
                     return;
@@ -178,7 +195,11 @@ public class BatteryService extends Service {
             SmsVo smsVo = new SmsVo("88888888", msg, new Date(), "电池状态监听");
             Log.d(TAG, "send_msg" + smsVo.toString());
             SendUtil.send_msg(context, smsVo, 1, "app");
-            SmsHubActionHandler.putData(new SmsHubVo(SmsHubVo.Type.phone, null, msg, "电池状态监听"));
+
+            //SmsHubApi
+            if (SettingUtil.getSwitchEnableSmsHubApi()) {
+                SmsHubActionHandler.putData(new SmsHubVo(SmsHubVo.Type.phone, null, msg, "电池状态监听"));
+            }
         } catch (Exception e) {
             Log.e(TAG, "getLog e:" + e.getMessage());
         }
