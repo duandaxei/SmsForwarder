@@ -12,7 +12,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimary"
         android:contentDescription="@string/setrule"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_add"
@@ -86,6 +85,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         app:current_step="rule"
-        app:help_tip="@string/log_tips" />
+        app:help_tip="@string/rule_tips" />
 
 </RelativeLayout>

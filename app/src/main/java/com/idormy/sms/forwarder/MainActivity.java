@@ -46,7 +46,6 @@ import com.idormy.sms.forwarder.utils.SharedPreferencesHelper;
 import com.idormy.sms.forwarder.utils.SmsUtil;
 import com.idormy.sms.forwarder.utils.TimeUtil;
 import com.idormy.sms.forwarder.view.StepBar;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 
 import java.lang.reflect.Method;
@@ -229,34 +228,32 @@ public class MainActivity extends AppCompatActivity implements RefreshListView.I
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onPageStart(TAG);
-        MobclickAgent.onResume(this);
-
-        //是否同意隐私协议
-        if (!MyApplication.allowPrivacyPolicy) return;
-
-        //第一次打开，未授权无法获取SIM信息，尝试在此重新获取
-        if (MyApplication.SimInfoList.isEmpty()) {
-            MyApplication.SimInfoList = PhoneUtils.getSimMultiInfo();
-        }
-        Log.d(TAG, "SimInfoList = " + MyApplication.SimInfoList.size());
-
-        //省电优化设置为无限制
-        if (MyApplication.showHelpTip && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            if (!KeepAliveUtils.isIgnoreBatteryOptimization(this)) {
-                Toast.makeText(this, R.string.tips_battery_optimization, Toast.LENGTH_LONG).show();
-            }
-        }
-
-        //开启读取通知栏权限
-        if (SettingUtil.getSwitchEnableAppNotify() && !CommonUtil.isNotificationListenerServiceEnabled(this)) {
-            CommonUtil.toggleNotificationListenerService(this);
-            SettingUtil.switchEnableAppNotify(false);
-            Toast.makeText(this, R.string.tips_notification_listener, Toast.LENGTH_LONG).show();
-            return;
-        }
 
         try {
+            //是否同意隐私协议
+            if (!MyApplication.allowPrivacyPolicy) return;
+
+            //第一次打开，未授权无法获取SIM信息，尝试在此重新获取
+            if (MyApplication.SimInfoList.isEmpty()) {
+                MyApplication.SimInfoList = PhoneUtils.getSimMultiInfo();
+            }
+            Log.d(TAG, "SimInfoList = " + MyApplication.SimInfoList.size());
+
+            //省电优化设置为无限制
+            if (MyApplication.showHelpTip && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (!KeepAliveUtils.isIgnoreBatteryOptimization(this)) {
+                    Toast.makeText(this, R.string.tips_battery_optimization, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            //开启读取通知栏权限
+            if (SettingUtil.getSwitchEnableAppNotify() && !CommonUtil.isNotificationListenerServiceEnabled(this)) {
+                CommonUtil.toggleNotificationListenerService(this);
+                SettingUtil.switchEnableAppNotify(false);
+                Toast.makeText(this, R.string.tips_notification_listener, Toast.LENGTH_LONG).show();
+                return;
+            }
+
             if (serviceIntent != null) startService(serviceIntent);
         } catch (Exception e) {
             Log.e(TAG, "onResume:", e);
@@ -285,8 +282,6 @@ public class MainActivity extends AppCompatActivity implements RefreshListView.I
         //是否同意隐私协议
         if (!MyApplication.allowPrivacyPolicy) return;
 
-        MobclickAgent.onPageEnd(TAG);
-        MobclickAgent.onPause(this);
         try {
             if (serviceIntent != null) startService(serviceIntent);
         } catch (Exception e) {
