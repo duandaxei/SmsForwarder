@@ -35,6 +35,7 @@
     <string name="about_item_donation_link">打赏名单</string>
     <string name="about_item_add_dingtalk_group">钉钉客户群</string>
     <string name="about_item_add_wework_group">企业微信群</string>
+    <string name="about_item_add_qq_channel">QQ频道</string>
     <string name="about_item_add_qq_group">QQ互助交流群</string>
     <string name="about_item_add_qq_group_1">①群</string>
     <string name="about_item_add_qq_group_2">②群</string>
@@ -52,6 +53,7 @@
     <string name="url_add_qq_group_5">https://qm.qq.com/cgi-bin/qm/qr?k=CcamLcA-QVN-KqCDjeMZqdTx8IGlJrVx</string>
     <string name="url_dingtalk_group">https://gitee.com/pp/SmsForwarder/raw/main/pic/dingtalk.png</string>
     <string name="url_wework_group">https://gitee.com/pp/SmsForwarder/raw/main/pic/qywechat.png</string>
+    <string name="url_qq_channel">https://qun.qq.com/qqweb/qunpro/share?_wv=3&amp;_wwv=128&amp;appChannel=share&amp;inviteCode=1W5aewP&amp;appChannel=share&amp;businessType=9&amp;from=246610&amp;biz=ka</string>
 
     <string name="lab_yes">是</string>
     <string name="lab_no">否</string>
@@ -170,6 +172,7 @@
     <string name="about">关于软件</string>
     <string name="help">使用帮助</string>
     <string name="clear_logs">清空日志</string>
+    <string name="clear_history">清空记录</string>
     <string name="app_rule">通知转发规则</string>
     <string name="call_rule">通话转发规则</string>
     <string name="sms_rule">短信转发规则</string>
@@ -780,7 +783,7 @@
     <string name="phone_numbers">手机号码</string>
     <string name="phone_numbers_hint">必填，多个手机号用半角分号分隔</string>
     <string name="phone_numbers_error">手机号码格式错误，例：15888888888;19999999999</string>
-    <string name="phone_numbers_regex">^\\d{5,11}(;\\d{5,11})*$</string>
+    <string name="phone_numbers_regex">^\\d{5,20}(;\\d{5,20})*$</string>
     <string name="msg_content">短信内容</string>
     <string name="msg_content_hint">必填，70个字符内算一条，超过70个字符，每增加64字符累加1条</string>
     <string name="msg_content_error">短信内容不能为空，最多390字符（6条短信）</string>
@@ -808,6 +811,7 @@
     <string name="battery_health">健康度：%s</string>
     <string name="battery_plugged">充电器：%s</string>
 
+    <string name="server_history">历史记录</string>
     <string name="server_test">测试接口</string>
     <string name="invalid_service_address">无效的服务地址！\n格式：http://127.0.0.1:5000 或 https://smsf.demo.com</string>
     <string name="click_test_button_first">请先点击【测试接口】按钮，获取服务端已启用的功能列表</string>
@@ -865,4 +869,5 @@
     <string name="load_app_list">启动时异步获取已安装App列表</string>
     <string name="load_app_list_tips">用于加速进入应用列表/编辑转发规则下拉选择/替换{{APP名称}}</string>
     <string name="load_app_list_toast">开启异步获取已安装App列表时必选一个类型</string>
+    <string name="no_server_history">暂无历史记录，接口测试通过后自动加入</string>
 </resources>
