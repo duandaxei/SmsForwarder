@@ -12,6 +12,9 @@ object Worker {
     const val sendLogId = "send_log_id"
     const val sendSbnId = "send_sbn_id"
     const val updateLogs = "update_logs"
+    const val ruleId = "rule_id"
+    const val senderIndex = "sender_index"
+    const val msgId = "msg_id"
 }
 
 //初始化相关
@@ -30,9 +33,12 @@ const val SP_ENABLE_CALL_TYPE_1 = "enable_call_type_1"
 const val SP_ENABLE_CALL_TYPE_2 = "enable_call_type_2"
 const val SP_ENABLE_CALL_TYPE_3 = "enable_call_type_3"
 const val SP_ENABLE_CALL_TYPE_4 = "enable_call_type_4"
+const val SP_ENABLE_CALL_TYPE_5 = "enable_call_type_5"
+const val SP_ENABLE_CALL_TYPE_6 = "enable_call_type_6"
 
 const val SP_ENABLE_APP_NOTIFY = "enable_app_notify"
 const val SP_ENABLE_CANCEL_APP_NOTIFY = "enable_cancel_app_notify"
+const val SP_CANCEL_EXTRA_APP_NOTIFY = "cancel_extra_app_notify"
 const val SP_ENABLE_NOT_USER_PRESENT = "enable_not_user_present"
 
 const val ENABLE_LOAD_APP_LIST = "enable_load_app_list"
@@ -103,6 +109,11 @@ const val CHECK_REGEX = "regex"
 const val CHECK_SIM_SLOT_ALL = "ALL"
 const val CHECK_SIM_SLOT_1 = "SIM1"
 const val CHECK_SIM_SLOT_2 = "SIM2"
+
+//发送通道执行逻辑：ALL=全部执行, UntilFail=失败即终止, UntilSuccess=成功即终止
+const val SENDER_LOGIC_ALL = "ALL"
+const val SENDER_LOGIC_UNTIL_FAIL = "UntilFail"
+const val SENDER_LOGIC_UNTIL_SUCCESS = "UntilSuccess"
 val TYPE_MAP = object : HashMap<String, String>() {
     init {
         put("sms", getString(R.string.rule_sms))
