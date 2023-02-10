@@ -79,6 +79,9 @@ class HttpServerUtils private constructor() {
         //是否启用远程查话簿
         var enableApiContactQuery: Boolean by SharedPreference(SP_ENABLE_API_CONTACT_QUERY, true)
 
+        //是否启用远程加话簿
+        var enableApiContactAdd: Boolean by SharedPreference(SP_ENABLE_API_CONTACT_ADD, true)
+
         //是否启用远程查电量
         var enableApiBatteryQuery: Boolean by SharedPreference(SP_ENABLE_API_BATTERY_QUERY, true)
 
@@ -86,7 +89,7 @@ class HttpServerUtils private constructor() {
         var enableApiWol: Boolean by SharedPreference(SP_ENABLE_API_WOL, true)
 
         //是否启用远程找手机
-        var enableApiLocation: Boolean by SharedPreference(SP_ENABLE_API_LOCATION, true)
+        var enableApiLocation: Boolean by SharedPreference(SP_ENABLE_API_LOCATION, false)
 
         //远程找手机定位缓存
         var apiLocationCache: LocationInfo by SharedPreference(SP_API_LOCATION_CACHE, LocationInfo())
