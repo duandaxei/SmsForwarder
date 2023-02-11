@@ -179,6 +179,7 @@ const val TYPE_GOTIFY = 11
 const val TYPE_DINGTALK_INNER_ROBOT = 12
 const val TYPE_FEISHU_APP = 13
 const val TYPE_URL_SCHEME = 14
+const val TYPE_SOCKET = 15
 var SENDER_FRAGMENT_LIST = listOf(
     PageInfo(
         getString(R.string.dingtalk_robot),
@@ -285,6 +286,13 @@ var SENDER_FRAGMENT_LIST = listOf(
         CoreAnim.slide,
         R.drawable.icon_url_scheme
     ),
+    PageInfo(
+        getString(R.string.socket),
+        "com.idormy.sms.forwarder.fragment.senders.SocketFragment",
+        "{\"\":\"\"}",
+        CoreAnim.slide,
+        R.drawable.icon_socket
+    ),
 )
 
 //前台服务
@@ -294,7 +302,7 @@ const val FRONT_CHANNEL_NAME = "SmsForwarder Foreground Service"
 
 //Frp内网穿透
 const val FRPC_LIB_DOWNLOAD_URL = "https://xupdate.ppps.cn/uploads/%s/%s/libgojni.so"
-const val FRPC_LIB_VERSION = "0.46.1"
+const val FRPC_LIB_VERSION = "0.47.0"
 const val EVENT_FRPC_UPDATE_CONFIG = "EVENT_FRPC_UPDATE_CONFIG"
 const val EVENT_FRPC_DELETE_CONFIG = "EVENT_FRPC_DELETE_CONFIG"
 const val EVENT_FRPC_RUNNING_ERROR = "EVENT_FRPC_RUNNING_ERROR"
