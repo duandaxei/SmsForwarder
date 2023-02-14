@@ -39,6 +39,10 @@ class SettingUtils private constructor() {
         //是否转发应用通知
         var enableAppNotify: Boolean by SharedPreference(SP_ENABLE_APP_NOTIFY, false)
 
+        //是否接受短信指令
+        var enableSmsCommand: Boolean by SharedPreference(SP_ENABLE_SMS_COMMAND, false)
+        var smsCommandSafePhone: String by SharedPreference(SP_SMS_COMMAND_SAFE_PHONE, "")
+
         //是否转发应用通知——自动消除通知
         var enableCancelAppNotify: Boolean by SharedPreference(SP_ENABLE_CANCEL_APP_NOTIFY, false)
 
@@ -68,6 +72,9 @@ class SettingUtils private constructor() {
 
         //自动删除N天前的转发记录
         var autoCleanLogsDays: Int by SharedPreference(SP_AUTO_CLEAN_LOGS_DAYS, 0)
+
+        //是否监听网络状态变化
+        var enableNetworkStateReceiver: Boolean by SharedPreference(SP_NET_STATE_RECEIVER, false)
 
         //是否监听电池状态变化
         var enableBatteryReceiver: Boolean by SharedPreference(SP_BATTERY_RECEIVER, false)
