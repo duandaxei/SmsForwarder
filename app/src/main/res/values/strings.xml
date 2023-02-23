@@ -28,7 +28,7 @@
     <string name="about_frpc_version">Frpc版本：%s</string>
     <string name="about_item_wechat_miniprogram">微信小程序</string>
     <string name="about_cache_purged">已清理缓存</string>
-    <string name="about_frpc_deleted">已删除动态库，重启APP中…</string>
+    <string name="about_frpc_deleted">已删除动态库，重启APP以便生效！</string>
     <string name="about_copyright">© %1$s PPPSCN All rights reserved.</string>
     <string name="about_item_open_source">开源仓库</string>
     <string name="about_item_github">GitHub</string>
@@ -242,6 +242,7 @@
     <string name="btn_end_with">结尾</string>
     <string name="btn_regex">正则匹配</string>
     <string name="match_value">匹配的值</string>
+    <string name="match_value_tips">如需匹配多个关键词，请用 正则匹配 或 多重匹配</string>
     <string name="switch_rule_status">启用该条转发规则</string>
     <string name="invalid_rule_status">该条转发规则已禁用</string>
     <string name="invalid_match_value">匹配的值不可为空</string>
@@ -375,7 +376,7 @@
     <string name="insert_sender">来源号码</string>
     <string name="insert_sender_app">APP包名</string>
     <string name="insert_content">短信内容</string>
-    <string name="insert_title_app">通知内容</string>
+    <string name="insert_title_app">通知标题</string>
     <string name="insert_content_app">通知内容</string>
     <string name="insert_extra">卡槽信息</string>
     <string name="insert_time">接收时间</string>
@@ -915,7 +916,7 @@
     <string name="export_failed_tips">导出失败: %s</string>
     <string name="import_failed">导入失败：请检查是否有外部存储访问权限！</string>
     <string name="import_failed_file_not_exist">导入失败：本地备份文件不存在！</string>
-    <string name="import_succeeded">导入配置成功！</string>
+    <string name="import_succeeded">导入配置成功！\n需要重启APP以便生效！\n重启后请再次核对所有配置项！</string>
     <string name="import_failed_tips">导入失败: %s</string>
     <string name="restore_failed">还原失败</string>
     <string name="battery_status_monitor">电池状态监听</string>
@@ -956,6 +957,7 @@
     <string name="silent_time_period">免打扰(禁用转发)时间段</string>
     <string name="silent_time_period_tips">结束时间小于开始时间则跨天；相等则禁用</string>
     <string name="download_frpc_tips">是否立即下载，并重启加载？</string>
+    <string name="download_frpc_tips2">下载成功，是否立即重启加载？</string>
     <string name="appkey">AppKey</string>
     <string name="appsecret">AppSecret</string>
     <string name="sampleText">文本类型</string>
