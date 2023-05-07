@@ -32,7 +32,7 @@ import com.xuexiang.xutil.resource.ResUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress("PropertyName", "DEPRECATION")
+@Suppress("DEPRECATION")
 class PhoneUtils private constructor() {
 
     companion object {
@@ -50,7 +50,7 @@ class PhoneUtils private constructor() {
                         XUtil.getContext(), permission.READ_PHONE_STATE
                     )
                     val activeSubscriptionInfoList: List<SubscriptionInfo>? = mSubscriptionManager.activeSubscriptionInfoList
-                    if (activeSubscriptionInfoList != null && activeSubscriptionInfoList.isNotEmpty()) {
+                    if (!activeSubscriptionInfoList.isNullOrEmpty()) {
                         //1.1.1 有使用的卡，就遍历所有卡
                         for (subscriptionInfo in activeSubscriptionInfoList) {
                             val simInfo = SimInfo()
@@ -90,6 +90,57 @@ class PhoneUtils private constructor() {
                 }
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
+            }
+            //仍然获取不到/只获取到一个->取出备注
+            if (infoList.isEmpty() || infoList.size == 1) {
+                println("3.直接取出备注框的数据作为信息")
+                //为空，两个卡都没有获取到信息
+                if (infoList.isEmpty()) {
+                    //卡1备注信息不为空
+                    val etExtraSim1 = SettingUtils.extraSim1
+                    if (!TextUtils.isEmpty(etExtraSim1)) {
+                        val simInfo1 = SimInfo()
+                        //卡1
+                        simInfo1.mSimSlotIndex = 0
+                        simInfo1.mNumber = etExtraSim1
+                        simInfo1.mSubscriptionId = SettingUtils.subidSim1
+                        //把卡放入
+                        infoList[simInfo1.mSimSlotIndex] = simInfo1
+                    }
+                    //卡2备注信息不为空
+                    val etExtraSim2 = SettingUtils.extraSim2
+                    if (!TextUtils.isEmpty(etExtraSim2)) {
+                        val simInfo2 = SimInfo()
+                        simInfo2.mSimSlotIndex = 1
+                        simInfo2.mNumber = etExtraSim2
+                        simInfo2.mSubscriptionId = SettingUtils.subidSim2
+                        //把卡放入
+                        infoList[simInfo2.mSimSlotIndex] = simInfo2
+                    }
+
+                    //有一张卡,判断是卡几
+                } else {
+                    var infoListIndex = -1
+                    for (obj in infoList) {
+                        infoListIndex = obj.key
+                    }
+                    //获取到卡1，且卡2备注信息不为空
+                    if (infoListIndex == 0 && !TextUtils.isEmpty(SettingUtils.extraSim2)) {
+                        //获取到卡1信息，卡2备注不为空，创建卡2实体
+                        val simInfo2 = SimInfo()
+                        simInfo2.mSimSlotIndex = 1
+                        simInfo2.mNumber = SettingUtils.extraSim2
+                        simInfo2.mSubscriptionId = SettingUtils.subidSim1
+                        infoList[simInfo2.mSimSlotIndex] = simInfo2
+                    } else if (infoListIndex == 1 && !TextUtils.isEmpty(SettingUtils.extraSim1)) {
+                        //获取到卡2信息，卡1备注不为空，创建卡1实体
+                        val simInfo1 = SimInfo()
+                        simInfo1.mSimSlotIndex = 0
+                        simInfo1.mNumber = SettingUtils.extraSim1
+                        simInfo1.mSubscriptionId = SettingUtils.subidSim1
+                        infoList[simInfo1.mSimSlotIndex] = simInfo1
+                    }
+                }
             }
             Log.e(TAG, infoList.toString())
             return infoList
