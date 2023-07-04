@@ -33,7 +33,7 @@ class DingtalkGroupRobotUtils private constructor() {
             logId: Long = 0L,
             msgId: Long = 0L
         ) {
-            val content: String = if (rule != null) {
+            var content: String = if (rule != null) {
                 msgInfo.getContentForSend(rule.smsTemplate, rule.regexReplace)
             } else {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
@@ -54,11 +54,7 @@ class DingtalkGroupRobotUtils private constructor() {
             Log.i(TAG, "requestUrl:$requestUrl")
 
             val msgMap: MutableMap<String, Any> = mutableMapOf()
-            msgMap["msgtype"] = "text"
-
-            val textText: MutableMap<String, Any> = mutableMapOf()
-            textText["content"] = content
-            msgMap["text"] = textText
+            msgMap["msgtype"] = setting.msgtype ?: "text"
 
             val atMap: MutableMap<String, Any> = mutableMapOf()
             msgMap["at"] = atMap
@@ -69,17 +65,33 @@ class DingtalkGroupRobotUtils private constructor() {
                 if (!TextUtils.isEmpty(setting.atMobiles)) {
                     val atMobilesArray: Array<String> = setting.atMobiles.toString().replace("[,，;；]".toRegex(), ",").trim(',').split(',').toTypedArray()
                     if (atMobilesArray.isNotEmpty()) {
-                        val atMobilesList: MutableList<String> = ArrayList()
+                        atMap["atMobiles"] = atMobilesArray
                         for (atMobile in atMobilesArray) {
-                            if (TextUtils.isDigitsOnly(atMobile)) {
-                                atMobilesList.add(atMobile)
+                            if (!content.contains("@${atMobile}")) {
+                                content += " @${atMobile}"
                             }
-                        }
-                        if (atMobilesList.isNotEmpty()) {
-                            atMap["atMobiles"] = atMobilesList
                         }
                     }
                 }
+                if (!TextUtils.isEmpty(setting.atDingtalkIds)) {
+                    val atDingtalkIdsArray: Array<String> = setting.atDingtalkIds.toString().replace("[,，;；]".toRegex(), ",").trim(',').split(',').toTypedArray()
+                    if (atDingtalkIdsArray.isNotEmpty()) {
+                        atMap["atDingtalkIds"] = atDingtalkIdsArray
+                        for (atDingtalkId in atDingtalkIdsArray) {
+                            if (!content.contains("@${atDingtalkId}")) {
+                                content += " @${atDingtalkId}"
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ("markdown" == msgMap["msgtype"]) {
+                val titleTemplate = setting.titleTemplate.toString()
+                val title = rule?.let { msgInfo.getTitleForSend(titleTemplate, it.regexReplace) } ?: msgInfo.getTitleForSend(titleTemplate)
+                msgMap["markdown"] = mutableMapOf<String, Any>("title" to title, "text" to content)
+            } else {
+                msgMap["text"] = mutableMapOf<String, Any>("content" to content)
             }
 
             val requestMsg: String = Gson().toJson(msgMap)

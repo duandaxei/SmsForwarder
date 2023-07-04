@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.EditText
+import android.widget.RadioGroup
 import androidx.fragment.app.viewModels
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.R
@@ -123,25 +125,28 @@ class DingtalkGroupRobotFragment : BaseFragment<FragmentSendersDingtalkGroupRobo
                     if (settingVo != null) {
                         binding!!.etToken.setText(settingVo.token)
                         binding!!.etSecret.setText(settingVo.secret)
-                        /*if (TextUtils.isEmpty(settingVo.atMobiles)) {
-                            binding!!.sbAtAll.isChecked = true
-                            binding!!.etAtMobiles.setText("")
-                        } else {
-                            binding!!.sbAtAll.isChecked = settingVo.atAll == true
-                            binding!!.etAtMobiles.setText(settingVo.atMobiles)
-                        }*/
                         binding!!.sbAtAll.isChecked = settingVo.atAll == true
                         binding!!.etAtMobiles.setText(settingVo.atMobiles)
+                        binding!!.etAtDingtalkIds.setText(settingVo.atDingtalkIds)
+                        binding!!.rgMsgType.check(settingVo.getMsgTypeCheckId())
+                        binding!!.etTitleTemplate.setText(settingVo.titleTemplate)
                     }
                 }
             })
     }
 
     override fun initListeners() {
+        binding!!.btInsertSender.setOnClickListener(this)
+        binding!!.btInsertExtra.setOnClickListener(this)
+        binding!!.btInsertTime.setOnClickListener(this)
+        binding!!.btInsertDeviceName.setOnClickListener(this)
         binding!!.btnTest.setOnClickListener(this)
         binding!!.btnDel.setOnClickListener(this)
         binding!!.btnSave.setOnClickListener(this)
         binding!!.sbAtAll.setOnCheckedChangeListener(this)
+        binding!!.rgMsgType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
+            binding!!.layoutCustomTemplate.visibility = if (checkedId == R.id.rb_msg_type_markdown) View.VISIBLE else View.GONE
+        }
         LiveEventBus.get(KEY_SENDER_TEST, String::class.java).observe(this) { mCountDownHelper?.finish() }
     }
 
@@ -149,16 +154,36 @@ class DingtalkGroupRobotFragment : BaseFragment<FragmentSendersDingtalkGroupRobo
         //这里只有一个监听不需要判断id
         if (isChecked) {
             binding!!.layoutAtMobiles.visibility = View.GONE
+            binding!!.layoutAtDingtalkIds.visibility = View.GONE
             binding!!.etAtMobiles.setText("")
+            binding!!.etAtDingtalkIds.setText("")
         } else {
             binding!!.layoutAtMobiles.visibility = View.VISIBLE
+            binding!!.layoutAtDingtalkIds.visibility = View.VISIBLE
         }
     }
 
     @SingleClick
     override fun onClick(v: View) {
         try {
+            val etTitleTemplate: EditText = binding!!.etTitleTemplate
             when (v.id) {
+                R.id.bt_insert_sender -> {
+                    CommonUtils.insertOrReplaceText2Cursor(etTitleTemplate, getString(R.string.tag_from))
+                    return
+                }
+                R.id.bt_insert_extra -> {
+                    CommonUtils.insertOrReplaceText2Cursor(etTitleTemplate, getString(R.string.tag_card_slot))
+                    return
+                }
+                R.id.bt_insert_time -> {
+                    CommonUtils.insertOrReplaceText2Cursor(etTitleTemplate, getString(R.string.tag_receive_time))
+                    return
+                }
+                R.id.bt_insert_device_name -> {
+                    CommonUtils.insertOrReplaceText2Cursor(etTitleTemplate, getString(R.string.tag_device_name))
+                    return
+                }
                 R.id.btn_test -> {
                     mCountDownHelper?.start()
                     Thread {
@@ -229,11 +254,11 @@ class DingtalkGroupRobotFragment : BaseFragment<FragmentSendersDingtalkGroupRobo
         val secret = binding!!.etSecret.text.toString().trim()
         val atAll = binding!!.sbAtAll.isChecked
         val atMobiles = binding!!.etAtMobiles.text.toString().trim()
-        /*if (!atAll && TextUtils.isEmpty(atMobiles)) {
-            throw Exception(getString(R.string.invalid_at_mobiles))
-        }*/
+        val atDingtalkIds = binding!!.etAtDingtalkIds.text.toString().trim()
+        val msgType = if (binding!!.rgMsgType.checkedRadioButtonId == R.id.rb_msg_type_markdown) "markdown" else "text"
+        val titleTemplate = binding!!.etTitleTemplate.text.toString().trim()
 
-        return DingtalkGroupRobotSetting(token, secret, atAll, atMobiles)
+        return DingtalkGroupRobotSetting(token, secret, atAll, atMobiles, atDingtalkIds, msgType, titleTemplate)
     }
 
     override fun onDestroyView() {
