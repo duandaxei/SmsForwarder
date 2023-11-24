@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -32,6 +33,7 @@ import com.idormy.sms.forwarder.core.BaseFragment
 import com.idormy.sms.forwarder.databinding.FragmentSettingsBinding
 import com.idormy.sms.forwarder.entity.SimInfo
 import com.idormy.sms.forwarder.receiver.BootReceiver
+import com.idormy.sms.forwarder.service.ForegroundService
 import com.idormy.sms.forwarder.utils.*
 import com.idormy.sms.forwarder.workers.LoadAppListWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -157,6 +159,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         editAddExtraSim1(binding!!.etExtraSim1)
         //SIM2备注
         editAddExtraSim2(binding!!.etExtraSim2)
+        //SIM卡槽状态监控
+        switchSimStateReceiver(binding!!.sbSimStateReceiver)
         //通知内容
         editNotifyContent(binding!!.etNotifyContent)
 
@@ -170,6 +174,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
 
         //纯客户端模式
         switchDirectlyToClient(binding!!.sbDirectlyToClient)
+
+        //启用 {{定位信息}} 标签
+        switchEnableLocationTag(binding!!.sbEnableLocationTag)
     }
 
     override fun onResume() {
@@ -212,10 +219,12 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                     it.show()
                 }
             }
+
             R.id.btn_extra_device_mark -> {
                 binding!!.etExtraDeviceMark.setText(PhoneUtils.getDeviceName())
                 return
             }
+
             R.id.btn_extra_sim1 -> {
                 App.SimInfoList = PhoneUtils.getSimMultiInfo()
                 if (App.SimInfoList.isEmpty()) {
@@ -239,6 +248,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 binding!!.etExtraSim1.setText(simInfo?.mCarrierName.toString() + "_" + simInfo?.mNumber.toString())
                 return
             }
+
             R.id.btn_extra_sim2 -> {
                 App.SimInfoList = PhoneUtils.getSimMultiInfo()
                 if (App.SimInfoList.isEmpty()) {
@@ -262,32 +272,38 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 binding!!.etExtraSim2.setText(simInfo?.mCarrierName.toString() + "_" + simInfo?.mNumber.toString())
                 return
             }
+
             R.id.bt_insert_sender -> {
                 CommonUtils.insertOrReplaceText2Cursor(etSmsTemplate, getString(R.string.tag_from))
                 return
             }
+
             R.id.bt_insert_content -> {
                 CommonUtils.insertOrReplaceText2Cursor(etSmsTemplate, getString(R.string.tag_sms))
                 return
             }
+
             R.id.bt_insert_extra -> {
                 CommonUtils.insertOrReplaceText2Cursor(
                     etSmsTemplate, getString(R.string.tag_card_slot)
                 )
                 return
             }
+
             R.id.bt_insert_time -> {
                 CommonUtils.insertOrReplaceText2Cursor(
                     etSmsTemplate, getString(R.string.tag_receive_time)
                 )
                 return
             }
+
             R.id.bt_insert_device_name -> {
                 CommonUtils.insertOrReplaceText2Cursor(
                     etSmsTemplate, getString(R.string.tag_device_name)
                 )
                 return
             }
+
             else -> {}
         }
     }
@@ -301,6 +317,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             if (isChecked) {
                 //检查权限是否获取
                 XXPermissions.with(this)
+                    // 接收 WAP 推送消息
+                    .permission(Permission.RECEIVE_WAP_PUSH)
+                    // 接收彩信
+                    .permission(Permission.RECEIVE_MMS)
                     // 接收短信
                     .permission(Permission.RECEIVE_SMS)
                     // 发送短信
@@ -881,6 +901,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
+    //SIM卡槽状态监控
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    fun switchSimStateReceiver(sbSimStateReceiver: SwitchButton) {
+        sbSimStateReceiver.isChecked = SettingUtils.enableSimStateReceiver
+        sbSimStateReceiver.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            App.SimInfoList = PhoneUtils.getSimMultiInfo()
+            if (isChecked && App.SimInfoList.isEmpty()) {
+                XToastUtils.error(R.string.tip_can_not_get_sim_infos)
+                XXPermissions.startPermissionActivity(
+                    requireContext(), "android.permission.READ_PHONE_STATE"
+                )
+                SettingUtils.enableSimStateReceiver = false
+                sbSimStateReceiver.isChecked = false
+                return@setOnCheckedChangeListener
+            }
+            SettingUtils.enableSimStateReceiver = isChecked
+        }
+    }
+
     //设置通知内容
     private fun editNotifyContent(etNotifyContent: EditText) {
         etNotifyContent.setText(SettingUtils.notifyContent)
@@ -888,21 +927,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
-                SettingUtils.notifyContent = etNotifyContent.text.toString().trim()
-                LiveEventBus.get(EVENT_UPDATE_NOTIFY, String::class.java).post(SettingUtils.notifyContent)
+                val notifyContent = etNotifyContent.text.toString().trim()
+                SettingUtils.notifyContent = notifyContent
+                val updateIntent = Intent(context, ForegroundService::class.java)
+                updateIntent.action = "UPDATE_NOTIFICATION"
+                updateIntent.putExtra("UPDATED_CONTENT", notifyContent)
+                context?.let { ContextCompat.startForegroundService(it, updateIntent) }
             }
         })
     }
 
     //设置转发时启用自定义模版
     @SuppressLint("UseSwitchCompatOrMaterialCode", "SetTextI18n")
-    fun switchSmsTemplate(sb_sms_template: SwitchButton) {
+    fun switchSmsTemplate(sbSmsTemplate: SwitchButton) {
         val isOn: Boolean = SettingUtils.enableSmsTemplate
-        sb_sms_template.isChecked = isOn
+        sbSmsTemplate.isChecked = isOn
         val layoutSmsTemplate: LinearLayout = binding!!.layoutSmsTemplate
         layoutSmsTemplate.visibility = if (isOn) View.VISIBLE else View.GONE
         val etSmsTemplate: EditText = binding!!.etSmsTemplate
-        sb_sms_template.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+        sbSmsTemplate.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             layoutSmsTemplate.visibility = if (isChecked) View.VISIBLE else View.GONE
             SettingUtils.enableSmsTemplate = isChecked
             if (!isChecked) {
@@ -950,6 +993,47 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                     XUtil.exitApp()
                 }.negativeText(R.string.lab_no).show()
             }
+        }
+    }
+
+    //启用 {{定位信息}} 标签
+    private fun switchEnableLocationTag(@SuppressLint("UseSwitchCompatOrMaterialCode") switchEnableLocationTag: SwitchButton) {
+        switchEnableLocationTag.isChecked = SettingUtils.enableLocationTag
+        switchEnableLocationTag.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            SettingUtils.enableLocationTag = isChecked
+            if (isChecked) {
+                XXPermissions.with(this).permission(Permission.ACCESS_COARSE_LOCATION).permission(Permission.ACCESS_FINE_LOCATION).permission(Permission.ACCESS_BACKGROUND_LOCATION).request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: List<String>, all: Boolean) {
+                        restartForegroundService()
+                    }
+
+                    override fun onDenied(permissions: List<String>, never: Boolean) {
+                        if (never) {
+                            XToastUtils.error(R.string.toast_denied_never)
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(requireContext(), permissions)
+                        } else {
+                            XToastUtils.error(R.string.toast_denied)
+                        }
+                        SettingUtils.enableLocationTag = false
+                        switchEnableLocationTag.isChecked = false
+                        restartForegroundService()
+                    }
+                })
+            } else {
+                restartForegroundService()
+            }
+        }
+    }
+
+    //重启前台服务
+    private fun restartForegroundService() {
+        val serviceIntent = Intent(requireContext(), ForegroundService::class.java)
+        serviceIntent.action = "START"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(serviceIntent)
+        } else {
+            requireContext().startService(serviceIntent)
         }
     }
 

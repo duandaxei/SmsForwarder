@@ -559,6 +559,8 @@
     <string name="active_request_tips">通过 被动接收 或者 主动轮询 获取指令，从而操作本机</string>
     <string name="httpserver">被动接收本地 HttpServer</string>
     <string name="httpserver_tips">WiFi网络下可用，启动后局域网内其他机器可直接调用本机接口</string>
+    <string name="sim_state_monitor">SIM卡槽状态监控</string>
+    <string name="sim_state_monitor_tips">需要手动创建APP转发规则，包名：66666666</string>
     <string name="network_state_monitor">网络状态监控</string>
     <string name="network_state_monitor_tips">需要手动创建APP转发规则，包名：77777777</string>
     <string name="network_state_change_remind">网络状态改变提醒</string>
@@ -606,6 +608,7 @@
     <string name="tag_title">{{通知标题}}</string>
     <string name="tag_scheme">{{通知Scheme}}</string>
     <string name="tag_call_type">{{通话类型}}</string>
+    <string name="tag_location">{{定位信息}}</string>
     <string name="rule_sms">短信</string>
     <string name="rule_call">来电</string>
     <string name="rule_app">应用</string>
@@ -703,7 +706,7 @@
     <string name="no">No</string>
     <string name="unknown">---</string>
     <string name="refresh">刷新</string>
-    <string name="tip_can_not_get_sim_infos">请确认应用权限【获取手机信息】为【始终允许】或手动填写</string>
+    <string name="tip_can_not_get_sim_infos">无法获取卡槽信息，请确认应用权限【获取手机信息】为【始终允许】</string>
     <string name="tip_can_not_get_sim_info">未获取到卡槽%s中的SIM卡信息</string>
     <string name="add">添加</string>
     <string name="check_update">检查更新</string>
@@ -1049,4 +1052,25 @@
     <string name="operator_name">运营商</string>
     <string name="host_address">本地IP</string>
     <string name="loading_app_list">正在异步加载应用列表...</string>
+
+    <string name="carrier_name">运营商名</string>
+    <string name="icc_id">ICC ID</string>
+    <string name="sim_slot_index">卡槽索引</string>
+    <string name="data_sim_index">数据卡槽</string>
+    <string name="number">手机号码</string>
+    <string name="country_iso">国家代码</string>
+    <string name="subscription_id">订阅标识</string>
+
+    <string name="net_no">没有网络</string>
+    <string name="net_2g">2G网络</string>
+    <string name="net_3g">3G网络</string>
+    <string name="net_4g">4G网络</string>
+    <string name="net_5g">5G网络</string>
+    <string name="net_wifi">WiFi</string>
+    <string name="net_ethernet">有线网络</string>
+    <string name="net_unknown">未知网络</string>
+    <string name="wifi_ssid">WiFi名称</string>
+
+    <string name="enable_location_tag">启用 {{定位信息}} 标签</string>
+    <string name="enable_location_tag_tips">在转发信息中插入手机的当前定位信息</string>
 </resources>
