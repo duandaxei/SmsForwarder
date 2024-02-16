@@ -623,11 +623,16 @@
     <string name="tag_scheme">{{通知Scheme}}</string>
     <string name="tag_call_type">{{通话类型}}</string>
     <string name="tag_location">{{定位信息}}</string>
+    <string name="tag_location_longitude">{{定位信息_经度}}</string>
+    <string name="tag_location_latitude">{{定位信息_纬度}}</string>
+    <string name="tag_location_address">{{定位信息_地址}}</string>
     <string name="tag_battery_pct">{{电池电量}}</string>
     <string name="tag_battery_status">{{电池状态}}</string>
     <string name="tag_battery_plugged">{{充电方式}}</string>
     <string name="tag_battery_info">{{电池信息}}</string>
     <string name="tag_uid">{{UID}}</string>
+    <string name="tag_ipv4">{{IPV4}}</string>
+    <string name="tag_ipv6">{{IPV6}}</string>
     <string name="rule_sms">短信</string>
     <string name="rule_call">来电</string>
     <string name="rule_app">应用</string>
@@ -1265,10 +1270,14 @@
     <string name="sim_1">SIM-1</string>
     <string name="sim_2">SIM-2</string>
 
-    <string name="time_after_screen_off">屏幕锁定后多长时间(分钟)</string>
-    <string name="time_after_screen_off_description">屏幕锁定%s后</string>
-    <string name="time_after_screen_on">屏幕解锁后多长时间(分钟)</string>
-    <string name="time_after_screen_on_description">屏幕解锁%s后</string>
+    <string name="time_after_screen_off">屏幕息屏后多长时间(分钟)</string>
+    <string name="time_after_screen_off_description">屏幕息屏%s后</string>
+    <string name="time_after_screen_on">屏幕开屏后多长时间(分钟)</string>
+    <string name="time_after_screen_on_description">屏幕开屏%s后</string>
+    <string name="time_after_screen_locked">屏幕锁定后多长时间(分钟)</string>
+    <string name="time_after_screen_locked_description">屏幕锁定%s后</string>
+    <string name="time_after_screen_unlocked">屏幕解锁后多长时间(分钟)</string>
+    <string name="time_after_screen_unlocked_description">屏幕解锁%s后</string>
     <string name="duration_minute">%s分钟</string>
 
     <string name="calc_type_distance">根据GPS坐标计算距离</string>

@@ -622,11 +622,16 @@
     <string name="tag_scheme">{{SCHEME}}</string>
     <string name="tag_call_type">{{CALL_TYPE}}</string>
     <string name="tag_location">{{LOCATION}}</string>
+    <string name="tag_location_longitude">{{LOCATION_LONGITUDE}}</string>
+    <string name="tag_location_latitude">{{LOCATION_LATITUDE}}</string>
+    <string name="tag_location_address">{{LOCATION_ADDRESS}}</string>
     <string name="tag_battery_pct">{{BATTERY_PCT}}</string>
     <string name="tag_battery_status">{{BATTERY_STATUS}}</string>
     <string name="tag_battery_plugged">{{BATTERY_PLUGGED}}</string>
     <string name="tag_battery_info">{{BATTERY_INFO}}</string>
     <string name="tag_uid">{{UID}}</string>
+    <string name="tag_ipv4">{{IPV4}}</string>
+    <string name="tag_ipv6">{{IPV6}}</string>
     <string name="rule_sms">SMS</string>
     <string name="rule_call">CALL</string>
     <string name="rule_app">APP</string>
@@ -1268,6 +1273,10 @@
     <string name="time_after_screen_off_description">%sAfter Screen Off</string>
     <string name="time_after_screen_on">Time After Screen On (Minutes)</string>
     <string name="time_after_screen_on_description">%sAfter Screen On</string>
+    <string name="time_after_screen_locked">Time After Screen Locked (Minutes)</string>
+    <string name="time_after_screen_locked_description">%sAfter Screen Locked</string>
+    <string name="time_after_screen_unlocked">Time After Screen Unlocked (Minutes)</string>
+    <string name="time_after_screen_unlocked_description">%sAfter Screen Unlocked</string>
     <string name="duration_minute">%s minutes </string>
 
     <string name="calc_type_distance">Calculate distance based on GPS coordinates.</string>

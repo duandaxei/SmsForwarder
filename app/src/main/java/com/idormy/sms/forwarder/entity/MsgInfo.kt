@@ -73,6 +73,8 @@ data class MsgInfo(
             .replace(getString(R.string.tag_device_name), deviceMark)
             .replace(getString(R.string.tag_app_version), versionName)
             .replace(getString(R.string.tag_call_type), callTypeMap[callType.toString()] ?: getString(R.string.unknown_call))
+            .replace(getString(R.string.tag_ipv4), TaskUtils.ipv4)
+            .replace(getString(R.string.tag_ipv6), TaskUtils.ipv6)
             .replace(getString(R.string.tag_battery_pct), TaskUtils.batteryPct.toString())
             .replace(getString(R.string.tag_battery_status), BatteryUtils.getStatus(TaskUtils.batteryStatus))
             .replace(getString(R.string.tag_battery_plugged), BatteryUtils.getPlugged(TaskUtils.batteryPlugged))
@@ -126,6 +128,8 @@ data class MsgInfo(
             .replace(getString(R.string.tag_device_name), deviceMark)
             .replace(getString(R.string.tag_app_version), versionName)
             .replace(getString(R.string.tag_call_type), callTypeMap[callType.toString()] ?: getString(R.string.unknown_call))
+            .replace(getString(R.string.tag_ipv4), TaskUtils.ipv4)
+            .replace(getString(R.string.tag_ipv6), TaskUtils.ipv6)
             .replace(getString(R.string.tag_battery_pct), TaskUtils.batteryPct.toString())
             .replace(getString(R.string.tag_battery_status), BatteryUtils.getStatus(TaskUtils.batteryStatus))
             .replace(getString(R.string.tag_battery_plugged), BatteryUtils.getPlugged(TaskUtils.batteryPlugged))
@@ -162,6 +166,8 @@ data class MsgInfo(
             .replace(getString(R.string.tag_device_name), jsonInnerStr(deviceMark))
             .replace(getString(R.string.tag_app_version), jsonInnerStr(versionName))
             .replace(getString(R.string.tag_call_type), jsonInnerStr(callTypeMap[callType.toString()] ?: getString(R.string.unknown_call)))
+            .replace(getString(R.string.tag_ipv4), jsonInnerStr(TaskUtils.ipv4))
+            .replace(getString(R.string.tag_ipv6), jsonInnerStr(TaskUtils.ipv6))
             .replace(getString(R.string.tag_battery_pct), jsonInnerStr(TaskUtils.batteryPct.toString()))
             .replace(getString(R.string.tag_battery_status), jsonInnerStr(BatteryUtils.getStatus(TaskUtils.batteryStatus)))
             .replace(getString(R.string.tag_battery_plugged), jsonInnerStr(BatteryUtils.getPlugged(TaskUtils.batteryPlugged)))
@@ -221,13 +227,19 @@ data class MsgInfo(
     //替换 {{定位信息}} 标签
     private fun replaceLocationTag(content: String, needJson: Boolean = false): String {
         if (TextUtils.isEmpty(content)) return content
-        if (content.indexOf(getString(R.string.tag_location)) == -1) return content
+        //if (content.indexOf(getString(R.string.tag_location)) == -1) return content
 
-        var location = HttpServerUtils.apiLocationCache.toString()
+        val location = HttpServerUtils.apiLocationCache
+        var locationStr = location.toString()
+        var address = location.address
         if (needJson) {
-            location = jsonInnerStr(location)
+            locationStr = jsonInnerStr(locationStr)
+            address = jsonInnerStr(address)
         }
-        return content.replace(getString(R.string.tag_location), location)
+        return content.replace(getString(R.string.tag_location), locationStr)
+            .replace(getString(R.string.tag_location_longitude), location.longitude.toString())
+            .replace(getString(R.string.tag_location_latitude), location.latitude.toString())
+            .replace(getString(R.string.tag_location_address), address)
     }
 
     private fun jsonInnerStr(string: String?): String {
